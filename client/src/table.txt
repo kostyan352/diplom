@@ -1,0 +1,22 @@
+ {
+              find.filter(array => {
+                return array.MDepart.includes(test)
+              }).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).sort(function (a, b) {
+                  if (a.MDepart > b.MDepart) {
+                    return 1;
+                  }
+                  if (a.MDepart < b.MDepart) {
+                    return -1;
+                  }
+                  // a должно быть равным b
+                  return 0;
+                }).map((array, index) => {
+                 return <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                    <TableCell><b>{array.MDepart}</b></TableCell>
+                    <TableCell><b> {array.Depart}</b></TableCell>
+                    <TableCell>{array.Name}</TableCell><TableCell>{array.ipPhone}</TableCell>
+                    <TableCell>{array.OfficePhone}</TableCell>
+                    <TableCell>{array.Title}</TableCell>
+                    <TableCell>{array.FIO}</TableCell>
+                </TableRow>
+                 })} 

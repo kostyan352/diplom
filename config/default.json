@@ -1,0 +1,4 @@
+{
+    "port": 5000,
+    "mongoUri": "mongodb+srv://kursdb:Stalker352@cluster0.fehx3.mongodb.net/irkadm?retryWrites=true&w=majority"
+}
