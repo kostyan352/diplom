@@ -10,6 +10,6 @@ const schema = new Schema({
     Mdepart: {type: String, required: true},
 
 },
-    {collection: 'people'}
+    {collection: 'test'}
 )
 module.exports =model('Person', schema)
