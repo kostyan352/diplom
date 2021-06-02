@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Drawer, AppBar, InputBase, Paper, ListItemText, CssBaseline, Toolbar,
    List, Typography, ListItem,Table, TableBody, TableCell, TableContainer,TableHead,TablePagination,
-   TableRow, Grid,Button,ButtonGroup,ClickAwayListener,Grow,Popper,MenuList,MenuItem  } from '@material-ui/core'
+   TableRow, Grid,Button,ButtonGroup,ClickAwayListener,Grow,Popper,MenuList,MenuItem } from '@material-ui/core'
 import SearchIcon  from '@material-ui/icons/Search';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import {useStyles} from './hook/stylehook'
@@ -12,17 +12,17 @@ import {useStyles} from './hook/stylehook'
 
 export default function App() {
   const classes = useStyles();
-  const [test, setTest] = useState('')// для получения значения из менюшки
-  const [value, setValue] =useState('')// Ввод в поиск
+  const [menu, setMenu] = useState('')// для получения значения из менюшки
+  const [search, setSearch] =useState('')// Ввод в поиск
   const [page, setPage] = React.useState(0);//
   const [rowsPerPage, setRowsPerPage] = React.useState(10);// людей в таблице
   const [state, setState] = useState({data:[],uniqDeps:[]})//Полученные массивы
-  const [testrows, setTestrows] =useState (0)// чтобы отображало нормально количество человек
+  const [rows, setrows] =useState (0)// чтобы отображало нормальное количество человек
   const [open, setOpen] = React.useState(false);// открыт или закрыт выбор
   const [selectedIndex, setSelectedIndex] = React.useState(0);// что выбрано в списке 
 
 
-  const options = ['Поиск по имени', 'Поиск по департаменту', 'Поиск по должности','Поиск по отделу'];
+  const options = ['Поиск по имени', 'Поиск по внутреннему номер', 'Поиск по городскому номеру','Поиск по отделу'];
   const anchorRef = React.useRef(null);
 
 
@@ -42,18 +42,17 @@ export default function App() {
       switch (selectedIndex) {
        
         case 0:
-          return array.Name.toLowerCase().includes(value.toLowerCase())
+          return array.Name.toLowerCase().includes(search.toLowerCase())
           case 1:
-             if (array.MDepart)
-          return array.MDepart.toLowerCase().includes(value.toLowerCase())
+             if (array.ipPhone)
+          return array.ipPhone.toLowerCase().includes(search.toLowerCase())
           else return 0
-            case 2: 
-            
-            if (array.Title)
-            return array.Title.toLowerCase().includes(value.toLowerCase())
+          case 2: 
+            if (array.OfficePhone)
+            return array.OfficePhone.toLowerCase().includes(search.toLowerCase())
             else return 0
             case 3: if (array.Depart)
-            return array.Depart.toLowerCase().includes(value.toLowerCase())
+            return array.Depart.toLowerCase().includes(search.toLowerCase())
             else return 0
               default: return 0
       }
@@ -74,10 +73,13 @@ export default function App() {
   };
   const menuHandler =(event) => {
     if (event.target.innerText === 'Все сотрудники')
-    setTest('')
+    setMenu('')
     else 
-     setTest(event.target.innerText)
+     setMenu(event.target.innerText)
      setPage(0)
+     setSearch('')
+     document.getElementById('search').value=''
+     
   }; 
   // поиск
   const handleMenuItemClick = (event, index) => {
@@ -101,31 +103,29 @@ export default function App() {
   {
     let table =
     find.filter(array => {
-      return array.MDepart.includes(test)
+      return array.MDepart.includes(menu)
     }).sort(function (a, b) {
-        if (a.MDepart > b.MDepart) {
+        if (a.Depart > b.Depart) {
           return 1;
         }
-        if (a.MDepart < b.MDepart) {
+        if (a.Depart < b.Depart) {
           return -1;
         }
         // a должно быть равным b
         return 0;
       })
-    if (testrows !==table.length)
-    setTestrows(table.length)
+    if (rows !==table.length)
+    setrows(table.length)
     table = table.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) 
     return table
        } 
   //   Имена колонок
   const columns = [
-    {  id: 'MDepart', label: 'Главное', Width: 150  },
-    { id: 'Depart', label: 'Департамент', Width: 150 },
-    { id: 'name', label: 'Имя', Width: 150 },
-    { id: 'ipPhone', label: 'Внутренний номер',Width: 150},
-    { id: 'OfficePhone', label: 'Городской номер', Width: 150},
-    { id: 'Title', label: 'Должность', Width: 150},
-    // { id: 'FIO', label: 'FIO', minWidth: 100 },
+    { id: 'Depart', label: 'Отдел' },
+    { id: 'name', label: 'Имя' },
+    { id: 'ipPhone', label: 'Внутренний номер'},
+    { id: 'OfficePhone', label: 'Городской номер'},
+    { id: 'Title', label: 'Должность' }
   ];
   return (
     //   Верхняя часть
@@ -136,7 +136,7 @@ export default function App() {
           <Typography  variant="h6" noWrap className={classes.title}>
             Телефонный справочник администрации города Иркутск
           </Typography>
-          {/*  поиск */}
+          {/* выбор поиска поиск */}
           <Grid container direction="column" alignItems="flex-end">
       <Grid item xs={12}>
         <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
@@ -187,7 +187,8 @@ export default function App() {
               <SearchIcon />
             </div>
             <InputBase
-              onChange={(event) => setValue(event.target.value)}
+              onChange={(event) => setSearch(event.target.value)}
+              id="search"
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
@@ -196,7 +197,6 @@ export default function App() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
-          
         </Toolbar>
       </AppBar>
 {/* Менюшка */}
@@ -234,6 +234,7 @@ export default function App() {
             <TableRow  >
               {columns.map((column) => (
                 <TableCell 
+                width="25%"
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
@@ -247,13 +248,11 @@ export default function App() {
  {/* ТУТ ВЫЗОВ ТАБЛИЦЫ */}
                 {tab().map((array, index) => {
        return <TableRow className={classes.rows} hover role="checkbox" tabIndex={-1} key={index}>
-          <TableCell><b>{array.MDepart}</b></TableCell>
-          <TableCell><b> {array.Depart}</b></TableCell>
+          <TableCell><b> {array.Depart.replace(/Администрация\//i,'')}</b></TableCell>
           <TableCell>{array.Name}</TableCell>
           <TableCell>{array.ipPhone}</TableCell>
           <TableCell>{array.OfficePhone}</TableCell>
           <TableCell>{array.Title}</TableCell>
-          {/* <TableCell>{array.FIO}</TableCell> */}
       </TableRow>
        })}
           </TableBody>
@@ -261,9 +260,9 @@ export default function App() {
       </TableContainer>
       <TablePagination
       labelRowsPerPage='Сотрудников на странице '
-        rowsPerPageOptions={[10, 25, 100,{value:testrows, label:"Все"}]}
+        rowsPerPageOptions={[10, 25, 100,{value:rows, label:"Все"}]}
         component="div"
-        count={testrows}
+        count={rows}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
